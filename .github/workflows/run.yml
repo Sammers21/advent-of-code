@@ -1,0 +1,13 @@
+on: [push]
+name: Run advent of code
+jobs:
+  advent-of-code:
+    name: Run advent of code
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - run: cargo build --release
+      - run: cargo run --release
