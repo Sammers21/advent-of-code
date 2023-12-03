@@ -1,20 +1,10 @@
 use std::collections::HashMap;
 
 pub fn day3() {
-    let test = "467..114..
-...*......
-..35..633.
-......#...
-617*......
-.....+.58.
-..592.....
-......755.
-...$.*....
-.664.598..";
     let d3p1 = include_str!("../data/day3p1.txt");
     let d3p2 = include_str!("../data/day3p2.txt");
     println!("Day 2 Part 1: {}", sum_all_line_part_numbers(d3p1));
-    println!("Test: {}", sum_of_gears(test));
+    println!("Day 2 Part 2: {}", sum_of_gears(d3p2));
 }
 
 struct Gear {
@@ -28,7 +18,7 @@ fn sum_of_gears(input: &str) -> i32 {
     let mut bottom: Option<&str> = None;
     let mut row = 0;
     // hashmap of (str, gear_index) -> vec<i32>
-    let mut gears: HashMap<(&str, usize), Vec<i32>> = HashMap::new();
+    let mut gears: HashMap<(String, usize), Vec<i32>> = HashMap::new();
     for line in input.lines() {
         if row == 0 {
             top = None;
@@ -52,7 +42,7 @@ fn sum_of_gears(input: &str) -> i32 {
     return sum;
 }
 
-fn gear_search(gears: &mut HashMap<(&str, usize), Vec<i32>>, row: &str, top: Option<&str>, bottom: Option<&str>) {
+fn gear_search(gears: &mut HashMap<(String, usize), Vec<i32>>, row: &str, top: Option<&str>, bottom: Option<&str>) {
     let regex = regex::Regex::new(r"[0-9]+").unwrap();
     // match the row with the regex
     let mut row_match = regex.find_iter(row);
@@ -69,7 +59,7 @@ fn gear_search(gears: &mut HashMap<(&str, usize), Vec<i32>>, row: &str, top: Opt
     }
 }
 
-fn update_touch_info(gears: &mut HashMap<(&str, usize), Vec<i32>>, line: Option<&str>, index: usize, len: usize, number: i32) {
+fn update_touch_info(gears: &mut HashMap<(String, usize), Vec<i32>>, line: Option<&str>, index: usize, len: usize, number: i32) {
         if let Some(line) = line {
         // iter over the line chars starting at index - 1 and ending at index + len + 1
         let start = if index == 0 { 0 } else { index - 1 };
@@ -78,20 +68,25 @@ fn update_touch_info(gears: &mut HashMap<(&str, usize), Vec<i32>>, line: Option<
         } else {
             index + len + 1
         };
-        for c in line.chars().skip(start).take(end - start) {
-            // if char is '*' its a gear
-            if c == '*' {
-                // if the gear is not in the hashmap
-                if !gears.contains_key(&(line, index)) {
-                    // add the gear to the hashmap
-                    gears.insert((line, index), vec![number]);
-                }
-                // if the gear is in the hashmap
-                else {
-                    // add the number to the gear
-                    gears.get_mut(&(line, index)).unwrap().push(number);
+        // same but with char indices
+        let mut char_index = 0;
+        for c in line.chars() {
+            if char_index >= start && char_index < end {
+                // if char is '*' its a gear
+                if c == '*' {
+                    // if the gear is not in the hashmap
+                    if !gears.contains_key(&(line.to_string(), char_index)) {
+                        // add the gear to the hashmap
+                        gears.insert((line.to_string(), char_index), vec![number]);
+                    }
+                    // if the gear is in the hashmap
+                    else {
+                        // add the number to the gear
+                        gears.get_mut(&(line.to_string(), char_index)).unwrap().push(number);
+                    }
                 }
             }
+            char_index += 1;
         }
     }
 }
