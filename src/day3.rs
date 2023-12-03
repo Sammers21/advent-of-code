@@ -7,11 +7,6 @@ pub fn day3() {
     println!("Day 2 Part 2: {}", sum_of_gears(d3p2));
 }
 
-struct Gear {
-    row: usize,
-    index: usize,
-}
-
 fn sum_of_gears(input: &str) -> i32 {
     let mut sum = 0;
     let mut top: Option<&str> = None;
